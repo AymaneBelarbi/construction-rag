@@ -1,0 +1,38 @@
+{
+  "provenance": {
+    "suite": "golden",
+    "model": "claude-haiku-5-5",
+    "repeats": 3,
+    "only": [],
+    "as_of": "2026-09-20",
+    "embedder": "api:https://api.openai.com/v1:text-embedding-3-small",
+    "store": "temp",
+    "thresholds": {
+      "min_question_pass_rate": 0.9,
+      "min_grounded_rate": 0.95,
+      "min_claims_supported_rate": 0.95,
+      "max_mean_cost_usd": 0.05,
+      "max_p95_wall_seconds": 30,
+      "max_errors": 0
+    },
+    "code_commit": "60d0b26",
+    "records_commit": "7e0e2ac",
+    "python": "3.14.8"
+  },
+  "summary": {
+    "runs": 54,
+    "valid_runs": 54,
+    "errors": 0,
+    "run_pass_rate": 1.0,
+    "question_pass_rate": 1.0,
+    "failing_questions": [],
+    "grounded_rate": 1.0,
+    "claims_supported_rate": 1.0,
+    "p50_wall_seconds": 4.285469,
+    "p95_wall_seconds": 9.834633,
+    "mean_cost_usd": 0.0011212962962962962,
+    "mean_llm_calls": 2.611111111111111,
+    "mean_input_tokens": 8335.814814814816,
+    "mean_output_tokens": 575.3703703703703
+  }
+}

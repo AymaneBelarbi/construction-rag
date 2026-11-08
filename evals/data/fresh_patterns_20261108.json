@@ -1,0 +1,12 @@
+{
+  "as_of": "2026-09-20",
+  "dataset_version": "d4a70106265eadb1091f17d74eddd1e9ac421291af18c0612722732c6bf9549e",
+  "cases": [
+    {"id": "closed-verifier", "query": "Was punch item PL-004 closed and who verified it?", "reference": "It is closed with a 2026-09-10 close date; the verifier field is blank, so the verifier is not recorded.", "source": "punch_items.csv PL-004"},
+    {"id": "not-submitted", "query": "What is the status of S-005 and when was it submitted?", "reference": "S-005 is not submitted and its submitted date is blank.", "source": "submittals.csv S-005"},
+    {"id": "rejected-change", "query": "Was CE-006 approved, and what estimated cost and delay did it list?", "reference": "CE-006 was rejected. Estimated cost was $9,100 and estimated delay was zero days.", "source": "change_events.csv CE-006"},
+    {"id": "answered-later", "query": "For RFI-006, what are the recorded needed and answered dates, and what is its status?", "reference": "RFI-006 was needed 2026-08-07, answered 2026-08-12 and its status is answered.", "source": "rfis.csv RFI-006"},
+    {"id": "unanswered-rfi", "query": "What is RFI-012 about, who has the ball, and is an answer recorded?", "reference": "It concerns casework finish at the circulation desk, is open with the Architect holding the ball, and no answer is recorded.", "source": "rfis.csv RFI-012"},
+    {"id": "daily-crew", "query": "What manpower and work does the daily report for 2026-08-04 record?", "reference": "It records 21 workers and board hanging level 1, duct install corridor, and floor prep stacks.", "source": "daily_reports.csv 2026-08-04"}
+  ]
+}

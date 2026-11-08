@@ -1,0 +1,76 @@
+# Continuous integration: lint, type-check and test on every push and pull request.
+# Needs no secrets: the tests never call the network, and the database is a throw-away container of this job.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      db:
+        # The same pinned image as docker-compose.yml.
+        image: pgvector/pgvector:0.8.6-pg17
+        env:
+          POSTGRES_USER: rag
+          POSTGRES_DB: rag
+          POSTGRES_PASSWORD: ci-only-password  # a container that exists only while this job runs
+        ports:
+          - 5433:5432
+        options: >-
+          --shm-size=1gb
+          --health-cmd "pg_isready -h 127.0.0.1 -U rag -d rag"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    env:
+      RAG_DB_PASSWORD: ci-only-password
+      RAG_REQUIRE_FULL: "1"  # a missing database or sample data fails the run instead of skipping tests
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The sample records are a separate, read-only repository (see README).
+      - uses: actions/checkout@v4
+        with:
+          repository: constructelligence-lab/construction-project-records
+          ref: 7e0e2ac4ed7e5c54c34ff24bd19506f0316ca7ac  # pinned: the truth tests parse this repo's CSVs and checker output
+          path: data/records
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - run: pip install -r requirements-dev.txt
+      - run: pip install -e . --no-deps
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Type check
+        run: mypy
+
+      - name: Unit and integration tests
+        # -W error::ResourceWarning turns a leaked file or connection into a failure.
+        run: python -W error::ResourceWarning -m unittest discover -s tests -t .
+
+      - name: Retrieval quality gate (offline, no LLM)
+        run: python -m evals.retrieval_eval --store temp
+
+      - name: Scale smoke test
+        run: python -m evals.scale_test --records 3000

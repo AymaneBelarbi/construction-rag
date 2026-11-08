@@ -1,0 +1,40 @@
+{
+  "provenance": {
+    "suite": "golden",
+    "model": "claude-sonnet-5-5",
+    "repeats": 3,
+    "only": [],
+    "as_of": "2026-09-20",
+    "embedder": "api:https://api.openai.com/v1:text-embedding-3-small",
+    "store": "temp",
+    "thresholds": {
+      "min_question_pass_rate": 0.9,
+      "min_grounded_rate": 0.95,
+      "max_mean_cost_usd": 0.05,
+      "max_p95_wall_seconds": 30,
+      "max_errors": 0
+    },
+    "code_commit": "ac168fb",
+    "records_commit": "7e0e2ac",
+    "python": "3.14.8"
+  },
+  "summary": {
+    "runs": 48,
+    "valid_runs": 48,
+    "errors": 0,
+    "run_pass_rate": 0.8125,
+    "question_pass_rate": 0.8125,
+    "failing_questions": [
+      "false-premise",
+      "multihop",
+      "sub-risk"
+    ],
+    "grounded_rate": 1.0,
+    "p50_wall_seconds": 5.427185,
+    "p95_wall_seconds": 13.103897,
+    "mean_cost_usd": 0.021416916666666664,
+    "mean_llm_calls": 2.6875,
+    "mean_input_tokens": 7879.916666666667,
+    "mean_output_tokens": 565.7083333333334
+  }
+}

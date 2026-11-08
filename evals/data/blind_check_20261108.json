@@ -1,0 +1,11 @@
+{
+  "as_of": "2026-09-20",
+  "dataset_version": "d4a70106265eadb1091f17d74eddd1e9ac421291af18c0612722732c6bf9549e",
+  "cases": [
+    {"id": "notice-late", "query": "Was notice for CE-003 recorded by the required date? Give both dates.", "reference": "Notice was due 2026-08-11 and recorded 2026-08-14, so it was late.", "source": "change_events.csv CE-003; checker Q08"},
+    {"id": "revision-current", "query": "Is S-001 currently waiting for resubmission? Explain its revision history.", "reference": "No. Revision 0 was revise and resubmit; revision 1 is current and approved as noted.", "source": "submittals.csv S-001 revisions 0 and 1"},
+    {"id": "missing-return", "query": "On what date was S-007 returned and what is its status?", "reference": "S-007 is approved, but its returned date is blank and cannot be determined from the record.", "source": "submittals.csv S-007; checker Q05"},
+    {"id": "rfi-missing-answer-date", "query": "Was RFI-014 answered and when was the answer recorded?", "reference": "RFI-014 is marked answered but its answered date is blank, so the date is unknown.", "source": "rfis.csv RFI-014; checker Q05"},
+    {"id": "zero-estimate", "query": "Does CE-001 record a cost estimate and schedule estimate? What are they?", "reference": "The estimated cost is $4,850 and the estimated schedule impact is 0 days. These are estimates.", "source": "change_events.csv CE-001"}
+  ]
+}

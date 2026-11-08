@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "construction-rag"
+version = "0.1.0"
+description = "A RAG system and tool-using agent over construction project logs (RFIs, submittals, change events, daily reports, punch items)."
+readme = "README.md"
+requires-python = ">=3.14"
+dynamic = ["dependencies"]  # one list of pins: requirements.txt
+
+[project.scripts]
+rag = "rag.cli.main:main"
+rag-ingest = "rag.cli.ingest:main"
+rag-migrate = "rag.db.migrate:main"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"rag.db" = ["migrations/*.sql"]
+
+[tool.ruff]
+line-length = 150
+target-version = "py314"
+extend-exclude = ["data"]
+
+[tool.ruff.lint]
+# E/W: style errors. F: unused names and imports. I: import order. B: likely bugs. UP: outdated syntax.
+select = ["E", "W", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["rag", "evals", "tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]   # test data (answers, queries, SQL) reads best on one line
+
+[tool.mypy]
+python_version = "3.14"
+files = ["src", "evals", "tests"]
+mypy_path = "src"         # the package lives in src/rag (installed with `pip install -e .`)
+explicit_package_bases = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true

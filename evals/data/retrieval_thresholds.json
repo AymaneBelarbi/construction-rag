@@ -1,0 +1,22 @@
+{
+  "_note": "default = the quality target for a real embedding model. embedders = exact model ids with their own floors: the offline hashing stand-in cannot do semantics, so its floors only catch regressions; text-embedding-3-small's floors sit just under its first real measurement (recall@5 0.93, recall@10 0.93, MRR 0.93 on 2026-11-07).",
+  "default": {
+    "min_recall_at_5": 0.8,
+    "min_recall_at_10": 0.8,
+    "min_mrr": 0.85,
+    "min_graph_recall": 1.0,
+    "min_negative_pass_rate": 1.0
+  },
+  "embedders": {
+    "hashing-v3-256": {
+      "min_recall_at_5": 0.65,
+      "min_recall_at_10": 0.7,
+      "min_mrr": 0.7
+    },
+    "api:https://api.openai.com/v1:text-embedding-3-small": {
+      "min_recall_at_5": 0.88,
+      "min_recall_at_10": 0.88,
+      "min_mrr": 0.9
+    }
+  }
+}

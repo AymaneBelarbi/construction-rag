@@ -1,0 +1,3 @@
+# Runtime dependencies, pinned. The standard library covers everything else.
+# psycopg is the PostgreSQL driver; the "binary" extra ships a prebuilt library (no compiler needed).
+psycopg[binary]==3.3.8

@@ -1,0 +1,416 @@
+{
+  "version": "2.0.0",
+  "review_status": "source_checked",
+  "project": "samples/library-renovation",
+  "records_commit": "7e0e2ac4ed7e5c54c34ff24bd19506f0316ca7ac",
+  "dataset_version": "d4a70106265eadb1091f17d74eddd1e9ac421291af18c0612722732c6bf9549e",
+  "as_of": "2026-09-20",
+  "cases": [
+    {
+      "id": "missing-due-date",
+      "category": "missing information",
+      "query": "As of 2026-09-20, is RFI-009 overdue?",
+      "reference_answer": "RFI-009 is open, but its date needed is blank. The record does not establish whether it is overdue.",
+      "source_ids": [
+        "RFI-009"
+      ],
+      "source_fields": [
+        "rfis.csv: RFI-009 status and date_needed",
+        "checker warning Q07"
+      ],
+      "failure_condition": "Assert that it is overdue or definitely on time despite the missing date."
+    },
+    {
+      "id": "superseded-revision",
+      "category": "revision",
+      "query": "What happened to the first revision of S-004, and what is the status of the current revision?",
+      "reference_answer": "Revision 0 was marked revise and resubmit. Revision 1 is in review and is the current revision.",
+      "source_ids": [
+        "S-004"
+      ],
+      "source_fields": [
+        "submittals.csv: S-004 revision 0 and revision 1 status"
+      ],
+      "failure_condition": "Treat the old status as current, swap the revisions, or omit one."
+    },
+    {
+      "id": "missing-notice-date",
+      "category": "missing information",
+      "query": "Was notice for CE-004 recorded by its required date, as of 2026-09-20?",
+      "reference_answer": "The notice deadline was 2026-09-03 and the notice date is blank. The deadline has passed, but the record does not establish that notice was recorded by it.",
+      "source_ids": [
+        "CE-004"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-004 notice_required_by and notice_date",
+        "checker warning Q08"
+      ],
+      "failure_condition": "Invent a notice date, assert notice was recorded on time, or assert it was never sent."
+    },
+    {
+      "id": "zero-cost-nonzero-delay",
+      "category": "false premise",
+      "query": "CE-007 has no cost or schedule impact, correct?",
+      "reference_answer": "Its estimated cost is $0.00, but its estimated schedule impact is 3 days. The record states estimates, not final cost or actual delay.",
+      "source_ids": [
+        "CE-007"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-007 estimated_cost, estimated_days, and status"
+      ],
+      "failure_condition": "Agree that schedule impact is zero, treat zero cost as missing, or present estimates as final outcomes."
+    },
+    {
+      "id": "exposure-scope",
+      "category": "aggregation scope",
+      "query": "As of 2026-09-20, what is the checker's open change exposure, and why is it different from summing only change events whose status is exactly open?",
+      "reference_answer": "The checker reports $48,720 and 15 days of open exposure. CE-004 and CE-007 have status open and total $18,500 and 8 estimated days. The checker's broader exposure also includes submitted CE-003 and priced CE-005.",
+      "source_ids": [
+        "CE-003",
+        "CE-004",
+        "CE-005",
+        "CE-007"
+      ],
+      "source_fields": [
+        "change_events.csv: status, estimated_cost and estimated_days for CE-003, CE-004, CE-005, CE-007",
+        "checker open exposure cost and days"
+      ],
+      "failure_condition": "Equate the status filter with the wider checker exposure, omit a contributing event, or claim an estimate is final."
+    },
+    {
+      "id": "late-notice",
+      "category": "notice dates",
+      "query": "Was notice for CE-003 recorded by the required date? Give both dates.",
+      "reference_answer": "No. The recorded notice date is 2026-08-14 and the deadline was 2026-08-11.",
+      "source_ids": [
+        "CE-003"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-003 notice_required_by and notice_date"
+      ],
+      "failure_condition": "Treat the notice as on time, reverse the dates, or state a contractual consequence."
+    },
+    {
+      "id": "revision-history",
+      "category": "revision",
+      "query": "Is S-001 currently waiting for resubmission? Explain its revisions.",
+      "reference_answer": "Revision 0 was revise and resubmit; current revision 1 is approved as noted.",
+      "source_ids": [
+        "S-001"
+      ],
+      "source_fields": [
+        "submittals.csv: S-001 revisions 0 and 1"
+      ],
+      "failure_condition": "Present revision 0 as current or omit either status."
+    },
+    {
+      "id": "missing-return",
+      "category": "missing information",
+      "query": "When was S-007 returned and what is its status?",
+      "reference_answer": "S-007 is approved; its returned date is not recorded.",
+      "source_ids": [
+        "S-007"
+      ],
+      "source_fields": [
+        "submittals.csv: S-007 status and returned_date"
+      ],
+      "failure_condition": "Invent a returned date or say approval did not happen."
+    },
+    {
+      "id": "rfi-answer-date",
+      "category": "missing information",
+      "query": "Was RFI-014 answered and when was the answer recorded?",
+      "reference_answer": "RFI-014 is marked answered but its answered date is blank.",
+      "source_ids": [
+        "RFI-014"
+      ],
+      "source_fields": [
+        "rfis.csv: RFI-014 status and answered_date"
+      ],
+      "failure_condition": "Invent an answer date or conclude the RFI was not answered."
+    },
+    {
+      "id": "closed-no-verifier",
+      "category": "missing information",
+      "query": "Was PL-004 closed and who verified it?",
+      "reference_answer": "PL-004 is closed, with a 2026-09-10 close date; its verifier is not recorded.",
+      "source_ids": [
+        "PL-004"
+      ],
+      "source_fields": [
+        "punch_items.csv: PL-004 status, closed_date, verified_by"
+      ],
+      "failure_condition": "Invent a verifier or claim nobody verified it."
+    },
+    {
+      "id": "closed-no-date",
+      "category": "missing information",
+      "query": "When was PL-007 closed and what is its status?",
+      "reference_answer": "PL-007 is marked closed; its close date is not recorded.",
+      "source_ids": [
+        "PL-007"
+      ],
+      "source_fields": [
+        "punch_items.csv: PL-007 status and closed_date"
+      ],
+      "failure_condition": "Invent a close date or say it remains open."
+    },
+    {
+      "id": "not-submitted",
+      "category": "missing information",
+      "query": "What is the status of S-005 and when was it submitted?",
+      "reference_answer": "S-005 is not submitted; its submitted date is blank.",
+      "source_ids": [
+        "S-005"
+      ],
+      "source_fields": [
+        "submittals.csv: S-005 status and submitted_date"
+      ],
+      "failure_condition": "Invent a submitted date or report the submittal as submitted."
+    },
+    {
+      "id": "rejected-zero",
+      "category": "status and estimates",
+      "query": "Was CE-006 approved, and what estimated cost and delay did it list?",
+      "reference_answer": "CE-006 was rejected; its estimated cost is $9,100 and estimated schedule impact is zero days.",
+      "source_ids": [
+        "CE-006"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-006 status, estimated_cost, estimated_days"
+      ],
+      "failure_condition": "Claim it was approved, misstate zero, or present estimates as final."
+    },
+    {
+      "id": "rfi-needed-answered",
+      "category": "date comparison",
+      "query": "What are RFI-006’s needed and answered dates and its status?",
+      "reference_answer": "RFI-006 is answered; needed 2026-08-07 and answered 2026-08-12.",
+      "source_ids": [
+        "RFI-006"
+      ],
+      "source_fields": [
+        "rfis.csv: RFI-006 status, date_needed, answered_date"
+      ],
+      "failure_condition": "Swap the dates, change status, or claim a contractual outcome."
+    },
+    {
+      "id": "unanswered-rfi",
+      "category": "status and missing information",
+      "query": "What is RFI-012 about, who holds it, and is an answer recorded?",
+      "reference_answer": "RFI-012 concerns casework finish at the circulation desk, is open with the Architect, and its answer field is blank.",
+      "source_ids": [
+        "RFI-012"
+      ],
+      "source_fields": [
+        "rfis.csv: RFI-012 subject, status, ball_in_court, answer"
+      ],
+      "failure_condition": "Invent an answer or person, or assert that the RFI is closed."
+    },
+    {
+      "id": "daily-report",
+      "category": "exact lookup",
+      "query": "What manpower and work does the daily report for 2026-08-04 record?",
+      "reference_answer": "It records 21 workers, board hanging level 1, duct install corridor, and floor prep stacks.",
+      "source_ids": [
+        "DR-2026-08-04"
+      ],
+      "source_fields": [
+        "daily_reports.csv: 2026-08-04 manpower_total and work_performed"
+      ],
+      "failure_condition": "Omit a work item or misstate manpower."
+    },
+    {
+      "id": "inspection-result",
+      "category": "exact lookup",
+      "query": "What did the 2026-09-10 report say about the reading room above-ceiling inspection?",
+      "reference_answer": "The reading room above-ceiling inspection passed.",
+      "source_ids": [
+        "DR-2026-09-10"
+      ],
+      "source_fields": [
+        "daily_reports.csv: 2026-09-10 inspections"
+      ],
+      "failure_condition": "Say the inspection failed or add an unsupported result."
+    },
+    {
+      "id": "weather-delay",
+      "category": "exact lookup",
+      "query": "What weather and roofing delay were recorded on 2026-08-13?",
+      "reference_answer": "Rain started at 10:00, roof work stopped, and roofing stood down for rain.",
+      "source_ids": [
+        "DR-2026-08-13"
+      ],
+      "source_fields": [
+        "daily_reports.csv: 2026-08-13 weather and delays"
+      ],
+      "failure_condition": "Misstate date, weather, or suggest work continued."
+    },
+    {
+      "id": "linked-rfi-change",
+      "category": "relationship",
+      "query": "Which change event is related to RFI-011, and what is its estimated cost and status?",
+      "reference_answer": "CE-004 is related to RFI-011; CE-004 is open with estimated cost $18,500.",
+      "source_ids": [
+        "CE-004",
+        "RFI-011"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-004 related_rfi, status, estimated_cost"
+      ],
+      "failure_condition": "Cite the wrong event, call the estimate final, or misstate status."
+    },
+    {
+      "id": "change-order-link",
+      "category": "relationship",
+      "query": "What change event is related to RFI-003 and what change order is recorded?",
+      "reference_answer": "CE-001 is related to RFI-003 and records change order CO-001.",
+      "source_ids": [
+        "CE-001",
+        "RFI-003"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-001 related_rfi and change_order_number"
+      ],
+      "failure_condition": "Invent a different event or change order."
+    },
+    {
+      "id": "zero-and-approved",
+      "category": "zero versus missing",
+      "query": "What estimated cost and schedule impact does CE-001 record?",
+      "reference_answer": "CE-001 records estimated cost $4,850 and estimated impact zero days.",
+      "source_ids": [
+        "CE-001"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-001 estimated_cost and estimated_days"
+      ],
+      "failure_condition": "Treat zero as absent or estimates as final."
+    },
+    {
+      "id": "false-premise-closed",
+      "category": "false premise",
+      "query": "PL-011 is already closed, correct?",
+      "reference_answer": "No. PL-011 is ready for review, not marked closed.",
+      "source_ids": [
+        "PL-011"
+      ],
+      "source_fields": [
+        "punch_items.csv: PL-011 status"
+      ],
+      "failure_condition": "Agree it is closed or invent a close date."
+    },
+    {
+      "id": "false-premise-approved",
+      "category": "false premise",
+      "query": "CE-005 is rejected, right?",
+      "reference_answer": "No. CE-005 is priced.",
+      "source_ids": [
+        "CE-005"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-005 status"
+      ],
+      "failure_condition": "Agree it is rejected or assert it is approved."
+    },
+    {
+      "id": "no-such-change",
+      "category": "absent record",
+      "query": "What is the estimated cost of CE-099?",
+      "reference_answer": "No matching CE-099 is present in the project records; its cost cannot be determined.",
+      "source_ids": [
+        "CE-099"
+      ],
+      "source_fields": [
+        "change_events.csv: event_number"
+      ],
+      "failure_condition": "Invent a cost or cite a nonexistent record as evidence."
+    },
+    {
+      "id": "open-architect-list",
+      "category": "complete list",
+      "query": "Which open RFIs are held by the Architect?",
+      "reference_answer": "RFI-009, RFI-010, RFI-012 and RFI-015.",
+      "source_ids": [
+        "RFI-009",
+        "RFI-010",
+        "RFI-012",
+        "RFI-015"
+      ],
+      "source_fields": [
+        "rfis.csv: status and ball_in_court"
+      ],
+      "failure_condition": "Omit a matching RFI, include a nonmatching one, or claim completeness without evidence."
+    },
+    {
+      "id": "open-exact-status",
+      "category": "aggregation scope",
+      "query": "What are the total estimated cost and days for change events with status exactly open?",
+      "reference_answer": "CE-004 and CE-007 total $18,500 and 8 estimated days.",
+      "source_ids": [
+        "CE-004",
+        "CE-007"
+      ],
+      "source_fields": [
+        "change_events.csv: status, estimated_cost and estimated_days for CE-004 and CE-007"
+      ],
+      "failure_condition": "Include submitted or priced events, omit zero cost, or state estimates as actuals."
+    },
+    {
+      "id": "two-record-comparison",
+      "category": "comparison",
+      "query": "Compare the status and estimated cost of CE-003 and CE-005.",
+      "reference_answer": "CE-003 is submitted with estimated cost $7,920; CE-005 is priced with estimated cost $22,300.",
+      "source_ids": [
+        "CE-003",
+        "CE-005"
+      ],
+      "source_fields": [
+        "change_events.csv: CE-003 and CE-005 status and estimated_cost"
+      ],
+      "failure_condition": "Swap statuses or costs, or describe either estimate as final."
+    },
+    {
+      "id": "rfi-impact",
+      "category": "exact lookup",
+      "query": "What cost and schedule impacts are recorded for RFI-008?",
+      "reference_answer": "Both cost impact and schedule impact are marked yes.",
+      "source_ids": [
+        "RFI-008"
+      ],
+      "source_fields": [
+        "rfis.csv: RFI-008 cost_impact and schedule_impact"
+      ],
+      "failure_condition": "Deny either recorded impact or invent a quantified amount."
+    },
+    {
+      "id": "punch-room",
+      "category": "exact lookup",
+      "query": "Where is PL-003, what is wrong, and who is responsible?",
+      "reference_answer": "PL-003 is in Room 106, describes a diffuser not aligned, and names Sample Mechanical.",
+      "source_ids": [
+        "PL-003"
+      ],
+      "source_fields": [
+        "punch_items.csv: PL-003 location, description and responsible_party"
+      ],
+      "failure_condition": "Invent the room, defect, or responsible party."
+    },
+    {
+      "id": "procurement-risk",
+      "category": "checker and dates",
+      "query": "Which submittals does the checker identify as procurement at risk on 2026-09-20?",
+      "reference_answer": "S-005, S-004 and S-008 are at risk, at 20, 13 and 6 days respectively.",
+      "source_ids": [
+        "S-005",
+        "S-004",
+        "S-008"
+      ],
+      "source_fields": [
+        "checker procurement at risk; submittals.csv review and lead time fields"
+      ],
+      "failure_condition": "Omit or add a submittal, swap days, or present risk as a confirmed delay."
+    }
+  ],
+  "description": "Development set: source-backed questions; not an independent holdout or production traffic."
+}

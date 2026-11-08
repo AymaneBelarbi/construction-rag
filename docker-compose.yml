@@ -1,0 +1,35 @@
+# Local development database: PostgreSQL 17 with the pgvector extension.
+#
+#   docker compose up -d --wait db   start it and wait until it accepts connections (first run downloads the image)
+#   docker compose down            stop it, keep the data
+#   docker compose down -v         stop it and DELETE the data
+#
+# The password comes from RAG_DB_PASSWORD in .env (see .env.example). Compose reads .env by itself.
+services:
+  db:
+    # Pinned to an exact pgvector release so everybody gets the same database.
+    # Not 0.8.7-pg17 (or the floating pg17 tag): as of 2026-11 that image ships an empty
+    # docker-entrypoint.sh and the container crash-loops with "exec format error".
+    image: pgvector/pgvector:0.8.6-pg17
+    restart: unless-stopped
+    # Docker gives a container only 64 MB of shared memory. Building the vector index for a big first load
+    # needs as much as PostgresStore's BULK_INDEX_MEMORY_MB (512), so a bigger limit is required.
+    shm_size: 1gb
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_DB: rag
+      POSTGRES_PASSWORD: ${RAG_DB_PASSWORD:?Set RAG_DB_PASSWORD in .env (see .env.example)}
+    ports:
+      - "127.0.0.1:5433:5432" # bound to this machine only; 5433 avoids clashing with a local Postgres
+    volumes:
+      - rag_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # -h 127.0.0.1 checks the real TCP server. The unix socket also answers during first-time setup,
+      # when a temporary server is running, which would report "healthy" too early.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U rag -d rag"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  rag_pgdata:

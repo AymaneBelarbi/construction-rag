@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "review_status": "source_checked",
+  "project": "samples/library-renovation",
+  "records_commit": "7e0e2ac4ed7e5c54c34ff24bd19506f0316ca7ac",
+  "dataset_version": "d4a70106265eadb1091f17d74eddd1e9ac421291af18c0612722732c6bf9549e",
+  "as_of": "2026-09-20",
+  "cases": [
+    {
+      "id": "missing-due-date",
+      "category": "missing information",
+      "query": "As of 2026-09-20, is RFI-009 overdue?",
+      "reference_answer": "RFI-009 is open, but its date needed is blank. The record does not establish whether it is overdue.",
+      "source_ids": ["RFI-009"],
+      "source_fields": ["rfis.csv: RFI-009 status and date_needed", "checker warning Q07"],
+      "failure_condition": "Assert that it is overdue or definitely on time despite the missing date."
+    },
+    {
+      "id": "superseded-revision",
+      "category": "revision",
+      "query": "What happened to the first revision of S-004, and what is the status of the current revision?",
+      "reference_answer": "Revision 0 was marked revise and resubmit. Revision 1 is in review and is the current revision.",
+      "source_ids": ["S-004"],
+      "source_fields": ["submittals.csv: S-004 revision 0 and revision 1 status"],
+      "failure_condition": "Treat the old status as current, swap the revisions, or omit one."
+    },
+    {
+      "id": "missing-notice-date",
+      "category": "missing information",
+      "query": "Was notice for CE-004 recorded by its required date, as of 2026-09-20?",
+      "reference_answer": "The notice deadline was 2026-09-03 and the notice date is blank. The deadline has passed, but the record does not establish that notice was recorded by it.",
+      "source_ids": ["CE-004"],
+      "source_fields": ["change_events.csv: CE-004 notice_required_by and notice_date", "checker warning Q08"],
+      "failure_condition": "Invent a notice date, assert notice was recorded on time, or assert it was never sent."
+    },
+    {
+      "id": "zero-cost-nonzero-delay",
+      "category": "false premise",
+      "query": "CE-007 has no cost or schedule impact, correct?",
+      "reference_answer": "Its estimated cost is $0.00, but its estimated schedule impact is 3 days. The record states estimates, not final cost or actual delay.",
+      "source_ids": ["CE-007"],
+      "source_fields": ["change_events.csv: CE-007 estimated_cost, estimated_days, and status"],
+      "failure_condition": "Agree that schedule impact is zero, treat zero cost as missing, or present estimates as final outcomes."
+    },
+    {
+      "id": "exposure-scope",
+      "category": "aggregation scope",
+      "query": "As of 2026-09-20, what is the checker's open change exposure, and why is it different from summing only change events whose status is exactly open?",
+      "reference_answer": "The checker reports $48,720 and 15 days of open exposure. CE-004 and CE-007 have status open and total $18,500 and 8 estimated days. The checker's broader exposure also includes submitted CE-003 and priced CE-005.",
+      "source_ids": ["CE-003", "CE-004", "CE-005", "CE-007"],
+      "source_fields": ["change_events.csv: status, estimated_cost and estimated_days for CE-003, CE-004, CE-005, CE-007", "checker open exposure cost and days"],
+      "failure_condition": "Equate the status filter with the wider checker exposure, omit a contributing event, or claim an estimate is final."
+    }
+  ]
+}
