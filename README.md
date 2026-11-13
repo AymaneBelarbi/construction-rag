@@ -98,6 +98,10 @@ The agent selects tools for the question and receives their results as data. Rec
 
 Ingestion saves a content-hashed copy of the source CSVs with the index. The CLI uses that snapshot for checks and compares the PostgreSQL snapshot generation before and after a question. If ingestion commits during the question, the CLI discards the result and asks for a retry. This assumes writes go through the ingestion path.
 
+### Tracing
+
+Set `LANGSMITH_API_KEY` to send every question to LangSmith as one trace: the question run, each agent and verifier model call (with model and token usage), and each tool call, nested in the order they ran. It uses LangSmith's batch API over the standard library, so there is nothing extra to install, and an upload failure is logged without affecting the answer. Like the JSON events, traces carry names, timings, token counts and outcome flags only; `LANGSMITH_INCLUDE_CONTENT=true` adds the question, prompts, tool inputs and outputs, and the answer, for a private project on test data. Evaluation runners trace the same way.
+
 ## Evaluation
 
 Run the offline checks with:
@@ -135,7 +139,7 @@ In the latest recorded blind run before subsequent changes, the system delivered
 | `src/rag/agent/` | Tool definitions, execution, and the agent loop |
 | `src/rag/answering/` | Answer prompts, evidence, citation and claim checks, verification |
 | `src/rag/providers/` | Chat and embedding providers |
-| `src/rag/infra/` | Resilience and telemetry |
+| `src/rag/infra/` | Resilience, telemetry, and LangSmith tracing |
 | `src/rag/cli/` and `src/rag/db/` | Command-line entry points, database connection, and migrations |
 | `tests/` and `evals/` | Offline tests, question sets, and evaluation runners |
 

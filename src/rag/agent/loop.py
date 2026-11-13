@@ -19,6 +19,7 @@ from rag.answering.answer import (
 )
 from rag.answering.claims import find_unsupported_claims
 from rag.answering.verification import verify_answer
+from rag.infra.langsmith import traced, traced_chat
 from rag.infra.resilience import DeadlineExceeded, deadline_budget
 from rag.infra.telemetry import log_event, request_context
 from rag.providers.llm import Chat
@@ -52,11 +53,17 @@ def run_agent(
     started = clock()
     answer: Answer | None = None
     failure: str | None = None
-    with request_context(stats.request_id if stats else None), deadline_budget(max_seconds):
+    model = stats.model if stats else ""
+    with (request_context(stats.request_id if stats else None), deadline_budget(max_seconds),
+          traced("question", "chain", {"as_of": tools.as_of, "dataset_version": tools.dataset_version,
+                                       "verifier_mode": verifier_mode, "max_steps": max_steps},
+                 content={"question": question},
+                 metadata={"request_id": stats.request_id} if stats else None) as run):
         try:
             deadline_started = deadline_clock()  # its own clock: the one above is for the timing statistics only
             try:
-                answer = _agent_loop(question, tools, chat, verifier_chat or chat, verifier_mode, max_steps,
+                answer = _agent_loop(question, tools, traced_chat(chat, "agent", model),
+                                     traced_chat(verifier_chat or chat, "verifier", model), verifier_mode, max_steps,
                                      lambda: deadline_clock() - deadline_started > max_seconds, max_seconds)
             except DeadlineExceeded:
                 answer = _out_of_time(tools, max_seconds)
@@ -68,6 +75,11 @@ def run_agent(
                 tools.trace.append({"event": "final", "status": answer.status,
                                     "verification_failed": answer.verification_failed,
                                     "withheld_because": answer.withheld_because})
+            if run:
+                run.outputs.update(status=answer.status, cited=len(answer.cited_ids), tool_calls=tools.tool_calls,
+                                   refused=answer.refused, verification_status=answer.verification_status,
+                                   withheld_because=answer.withheld_because)
+                run.content.update(answer=answer.text, cited_ids=list(answer.cited_ids))
             return answer
         except Exception as problem:
             failure = type(problem).__name__
@@ -110,7 +122,11 @@ def _agent_loop(question: str, tools: Tools, chat: Chat, verifier_chat: Chat, ve
             results = []
             for block in response["content"]:
                 if block.get("type") == "tool_use":
-                    output = tools.call(block["name"], block.get("input") or {})
+                    with traced(str(block["name"]), "tool", content={"input": block.get("input") or {}}) as tool_run:
+                        output = tools.call(block["name"], block.get("input") or {})
+                        if tool_run:
+                            tool_run.outputs["is_error"] = is_tool_error(output)
+                            tool_run.content["output"] = output
                     if out_of_time():
                         return _out_of_time(tools, max_seconds)
                     # Tool results contain text written by other people: hand it over as data.
